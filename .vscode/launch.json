@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args":[
+                // "--video", "0",
+                // "--output", "./data/video/results.avi"               
+                // "--video", "./data/video/test1.mp4",
+                "--video", "/home/amrlabs/miniconda3/envs/Mask-RCNN-TF2/data/sample_driving_0618.mp4",
+                "--output","./data/video/result_0619-1.avi",
+                // "--weights", "./weights/yolov3-tiny.tf",
+                // "--tiny"
+            ]
+        }
+    ]
+}
