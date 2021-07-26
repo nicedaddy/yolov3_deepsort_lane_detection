@@ -442,9 +442,7 @@ def lane_finding_pipeline(img,init, mts, dist):
 
 def main():
 
-    # cap = cv2.VideoCapture('/home/amrlabs/Documents/github/1v_Advanced-Lane-Detection/sample_driving_0621-2.mp4')
-    cap = cv2.VideoCapture('test_sample.mp4') # test_sample.mp4
-    # cap = cv2.VideoCapture('sample_driving_0621-2.mp4')
+    cap = cv2.VideoCapture('./data/video/test_sample.mp4') # test_sample.mp4
     if not cap.isOpened():
         print('File open failed!')
         cap.release()
@@ -461,7 +459,7 @@ def main():
     rows,cols,ext= img_steering.shape
 
     # create the `VideoWriter()` object
-    out = cv2.VideoWriter('result_output-0726.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+    out = cv2.VideoWriter('./data/video/lane_detection_result.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
 
     init=True
     mtx, dist = distortion_factors()
@@ -480,13 +478,13 @@ def main():
             init=False
 
         #Steering Image
-        #angle = atan((180/pi)*(angle/5))
+        angle = atan((180/pi)*(angle/5))
         M = cv2.getRotationMatrix2D((cols/2,rows/2),-angle*10,1)
         dst = cv2.warpAffine(img_steering,M,(cols,rows))
         #cv2.imshow("steering wheel", dst)
         height, width, channel = dst.shape
         height1, width1, channel1 = img_out.shape
-        #img_out[(height1-height):height1, int(width1/2-width/2):(int(width1/2-width/2)+width)] = dst
+        img_out[(height1-height):height1, int(width1/2-width/2):(int(width1/2-width/2)+width)] = dst
 
         #Videowirte
         out.write(img_out)    
