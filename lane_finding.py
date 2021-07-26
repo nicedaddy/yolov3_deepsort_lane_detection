@@ -59,20 +59,24 @@ def distortion_factors():
     return mtx, dist         
 
 ### STEP 2: Perspective Transform from Car Camera to Bird's Eye View ###
+# img_width = 1280
+# img_heigt = 720
 
 def warp(img, mtx, dist): # mts, dist
     undist = cv2.undistort(img, mtx, dist, None, mtx)
     img_size = (img.shape[1], img.shape[0])
-    offset = 100
+    print(img_size)
+    offset = 150
     
     # Source points taken from images with straight lane lines, 
     # these are to become parallel after the warp transform
     src = np.float32([
-        (350, 1080), # bottom-left corner
-        (845, 700), # top-left corner 
-        (1020, 700), # top-right corner
-        (1560, 1080) # bottom-right corner
+        (317, 720), # bottom-left corner
+        (559, 457), # top-left corner 
+        (671, 457), # top-right corner
+        (1026, 720) # bottom-right corner
     ])
+
     # Destination points are to be parallel, taken into account the image size
     dst = np.float32([
         [offset, img_size[1]],             # bottom-left corner
@@ -128,9 +132,6 @@ def binary_thresholded(img):
 
 def find_lane_pixels_using_histogram(binary_warped):
     
-    # Center Area noise deleted : 1920*1080 #
-    binary_warped[:, 500:1420]=0
-    
     out_img = np.dstack((binary_warped, binary_warped, binary_warped))*255
     window_img = np.zeros_like(out_img)
  
@@ -146,9 +147,9 @@ def find_lane_pixels_using_histogram(binary_warped):
     # Choose the number of sliding windows
     nwindows = 9
     # Set the width of the windows +/- margin
-    margin = 100
+    margin = int(1280*(100/1920))
     # Set minimum number of pixels found to recenter window
-    minpix = 50
+    minpix =  int(1280*(50/1920))
 
     # Set height of windows - based on nwindows above and image shape
     window_height = np.int(binary_warped.shape[0]//nwindows)
@@ -239,7 +240,7 @@ def draw_poly_lines(binary_warped, left_fitx, right_fitx, ploty):
     out_img = np.dstack((binary_warped, binary_warped, binary_warped))*255
     window_img = np.zeros_like(out_img)
         
-    margin = 100
+    margin = int(1280*(100/1920))
     # Generate a polygon to illustrate the search window area
     # And recast the x and y points into usable format for cv2.fillPoly()
     left_line_window1 = np.array([np.transpose(np.vstack([left_fitx-margin, ploty]))])
@@ -278,7 +279,7 @@ def find_lane_pixels_using_prev_poly(binary_warped):
     # global prev_right_fit
 
     # width of the margin around the previous polynomial to search
-    margin = 100
+    margin = int(1280*(100/1920))
     # Grab activated pixels
     nonzero = binary_warped.nonzero()
     nonzeroy = np.array(nonzero[0])
@@ -304,8 +305,10 @@ def find_lane_pixels_using_prev_poly(binary_warped):
 
 def measure_curvature_meters(binary_warped, left_fitx, right_fitx, ploty):
     # Define conversions in x and y from pixels space to meters
-    ym_per_pix = 30/1080 # meters per pixel in y dimension
-    xm_per_pix = 3.7/1920 # meters per pixel in x dimension
+    # ym_per_pix = 30/1080 # meters per pixel in y dimension
+    # xm_per_pix = 3.7/1920 # meters per pixel in x dimension
+    ym_per_pix = 30/1080 *(720/1080)  # meters per pixel in y dimension
+    xm_per_pix = 3.7/1920 *(1280/1920) # meters per pixel in x dimension
     
     left_fit_cr = np.polyfit(ploty*ym_per_pix, left_fitx*xm_per_pix, 2)
     right_fit_cr = np.polyfit(ploty*ym_per_pix, right_fitx*xm_per_pix, 2)
@@ -321,7 +324,7 @@ def measure_curvature_meters(binary_warped, left_fitx, right_fitx, ploty):
 
 def measure_position_meters(binary_warped, left_fit, right_fit):
     # Define conversion in x from pixels space to meters
-    xm_per_pix = 3.7/1920 # meters per pixel in x dimension
+    xm_per_pix = 3.7/1920 * (1280/1920)# meters per pixel in x dimension
     # Choose the y value corresponding to the bottom of the image
     y_max = binary_warped.shape[0]
     # Calculate left and right line positions at the bottom of the image
@@ -344,7 +347,7 @@ def project_lane_info(img, binary_warped, ploty, left_fitx, right_fitx, M_inv, l
     color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
     
     # Center Line modified
-    margin = 400
+    margin = 400 * (1280/1920)
     # Recast the x and y points into usable format for cv2.fillPoly()
     pts_left = np.array([np.transpose(np.vstack([left_fitx, ploty]))])
     pts_right = np.array([np.flipud(np.transpose(np.vstack([right_fitx, ploty])))])
@@ -369,8 +372,8 @@ def project_lane_info(img, binary_warped, ploty, left_fitx, right_fitx, M_inv, l
     # Combine the result with the original image
     out_img = cv2.addWeighted(img, 0.7, newwarp, 0.3, 0)
          
-    cv2.putText(out_img,'Curve Radius [m]: '+str((left_curverad+right_curverad)/2)[:7],(40,100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.6, (255,255,255),2,cv2.LINE_AA)
-    cv2.putText(out_img,'Center Offset [m]: '+str(veh_pos)[:7],(40,135), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.6,(255,255,255),2,cv2.LINE_AA)
+    cv2.putText(out_img,'Curve Radius [m]: '+str((left_curverad+right_curverad)/2)[:7],(40,70), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.6, (255,255,255),2,cv2.LINE_AA)
+    cv2.putText(out_img,'Center Offset [m]: '+str(veh_pos)[:7],(40,150), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.6,(255,255,255),2,cv2.LINE_AA)
     
     return out_img, colorwarp_img, newwarp
 
@@ -440,8 +443,8 @@ def lane_finding_pipeline(img,init, mts, dist):
 def main():
 
     # cap = cv2.VideoCapture('/home/amrlabs/Documents/github/1v_Advanced-Lane-Detection/sample_driving_0621-2.mp4')
-    cap = cv2.VideoCapture('sample_driving_0621-2.mp4')
-
+    cap = cv2.VideoCapture('test_sample.mp4') # test_sample.mp4
+    # cap = cv2.VideoCapture('sample_driving_0621-2.mp4')
     if not cap.isOpened():
         print('File open failed!')
         cap.release()
@@ -450,7 +453,7 @@ def main():
     ## video out ##
     w = round(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = round(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    fps = cap.get(cv2.CAP_PROP_FPS) 
     delay=int(1000 / fps)
 
     angle=0
@@ -458,7 +461,7 @@ def main():
     rows,cols,ext= img_steering.shape
 
     # create the `VideoWriter()` object
-    out = cv2.VideoWriter('result_output-1.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+    out = cv2.VideoWriter('result_output-0726.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
 
     init=True
     mtx, dist = distortion_factors()

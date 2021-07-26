@@ -29,18 +29,14 @@ from PIL import Image
 import pyshine as ps
 import lane_finding
 
-filename0='/home/amrlabs/Documents/github/1v_Advanced-Lane-Detection/sample_driving_0621-2.mp4'
-filename1='/home/amrlabs/miniconda3/envs/Mask-RCNN-TF2/data/result_output.mp4'
-output_filename ="./data/video/result_0622-1.avi"
-
 flags.DEFINE_string('classes', './data/labels/coco.names', 'path to classes file')
 flags.DEFINE_string('weights', './weights/yolov3.tf',
                     'path to weights file')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('size', 416, 'resize images to')
-flags.DEFINE_string('video', filename0,
-                    'path to video file or number for webcam)') #./data/video/test_d.mp4
-flags.DEFINE_string('output', output_filename, 'path to output video') #None
+flags.DEFINE_string('video', './data/video/test_sample.mp4',
+                    'path to video file or number for webcam)')
+flags.DEFINE_string('output', './data/video/result.avi', 'path to output video')
 flags.DEFINE_string('output_format', 'XVID', 'codec used in VideoWriter when saving video to file')
 flags.DEFINE_integer('num_classes', 80, 'number of classes in the model')
 
@@ -49,10 +45,6 @@ flags.DEFINE_integer('num_classes', 80, 'number of classes in the model')
 # 1. Distance Calculation
 # 2. Warning the collision
 ###################################################
-
-
-# FLAGS.video = 0
-# FLAGS.output = "./data/video/results.avi"
 
 def main(_argv):
     # Definition of the parameters
@@ -171,10 +163,6 @@ def main(_argv):
             cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
             cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
                     
-            # tracking initialize
-            # if cv2.waitKey(1) == ord('z'):
-            #     tracker.tracks = []
-
             ################################
             # Distance Calculation 
             ################################

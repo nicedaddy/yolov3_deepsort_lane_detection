@@ -1,4 +1,4 @@
-# Object Tracking using YOLOv3, Deep Sort and Tensorflow
+# Object Tracking using YOLOv3, Deep Sort and Tensorflow (Lane Detection and Collision Warning added)
 This repository implements YOLOv3 and Deep SORT in order to perfrom real-time object tracking. Yolov3 is an algorithm that uses deep convolutional neural networks to perform object detection. We can feed these object detections into Deep SORT (Simple Online and Realtime Tracking with a Deep Association Metric) in order for a real-time object tracker to be created.
 
 ![Demo of Object Tracker](data/helpers/demo.gif)
@@ -86,12 +86,12 @@ python object_tracker.py --video ./data/video/test.mp4 --output ./data/video/res
 The output flag saves your object tracker results as an avi file for you to watch back. It is not necessary to have the flag if you don't want to save the resulting video.
 
 There is a test video uploaded in the data/video folder called test.mp4. If you followed all the steps properly with the pretrained coco yolov3.weights model then when your run the object tracker wiht the first command above you should see the following.
+
+## Lane Detection and collision warning
+This project is implemented in Python and uses OpenCV image processing library.
+
 #### Video Example
 ![Demo of Object Tracker](data/helpers/demo.gif)
-
-#### Webcam Example
-This is a demo of running the object tracker using the above command for running the object tracker on your webcam.
-![Webcam Demo](data/helpers/webcam_demo.gif)
 
 ## Command Line Args Reference
 ```
@@ -134,6 +134,8 @@ object_tracker.py:
 ```
 
 ## Acknowledgments
+* [Yolov3_deepsort](https://github.com/theAIGuysCode/yolov3_deepsort)
+* [Advanced Lane Detection](https://github.com/nicedaddy/Advanced-Lane-Detection)
 * [Yolov3 TensorFlow Amazing Implementation](https://github.com/zzh8829/yolov3-tf2)
 * [Deep SORT Repository](https://github.com/nwojke/deep_sort)
 * [Yolo v3 official paper](https://arxiv.org/abs/1804.02767)
